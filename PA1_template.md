@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 The project explore the Activity monitoring data, and visulize the distribution 
 of total number of steps taken per day, and the average number of steps by time 
 interval. By filling the missing data with average number of steps by time 
@@ -20,7 +15,8 @@ this repo. In order to make this RMarkdown file work, users need to move the
 file to the directory which contains the "activity.zip" file. Print the summary 
 table of the activity dataset as the output.
 
-```{r loadingdata, echo=TRUE, results="asis"}
+
+```r
 if (("xtable" %in% (installed.packages())) == F) {
         install.packages("xtable")
 }
@@ -31,10 +27,24 @@ activityTable <- xtable(summary(activity))
 print(activityTable, type = "html")
 ```
 
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Sat Feb 14 19:18:28 2015 -->
+<table border=1>
+<tr> <th>  </th> <th>     steps </th> <th>      date </th> <th>    interval </th>  </tr>
+  <tr> <td align="right"> 1 </td> <td> Min.   :  0.00   </td> <td> Min.   :2012-10-01   </td> <td> Min.   :   0.0   </td> </tr>
+  <tr> <td align="right"> 2 </td> <td> 1st Qu.:  0.00   </td> <td> 1st Qu.:2012-10-16   </td> <td> 1st Qu.: 588.8   </td> </tr>
+  <tr> <td align="right"> 3 </td> <td> Median :  0.00   </td> <td> Median :2012-10-31   </td> <td> Median :1177.5   </td> </tr>
+  <tr> <td align="right"> 4 </td> <td> Mean   : 37.38   </td> <td> Mean   :2012-10-31   </td> <td> Mean   :1177.5   </td> </tr>
+  <tr> <td align="right"> 5 </td> <td> 3rd Qu.: 12.00   </td> <td> 3rd Qu.:2012-11-15   </td> <td> 3rd Qu.:1766.2   </td> </tr>
+  <tr> <td align="right"> 6 </td> <td> Max.   :806.00   </td> <td> Max.   :2012-11-30   </td> <td> Max.   :2355.0   </td> </tr>
+  <tr> <td align="right"> 7 </td> <td> NA's   :2304   </td> <td>  </td> <td>  </td> </tr>
+   </table>
+
 ## What is mean total number of steps taken per day?
 Calculate total number of steps taken per day, and create the histogram plot of 
 the total steps per day using the lattice package.
-```{r histogram, echo=TRUE}
+
+```r
 if (("lattice" %in% (installed.packages())) == F) {
         install.packages("lattice")
 }
@@ -44,21 +54,32 @@ histogram(stepsperDay, main = "Total number of steps taken per day",
           xlab = "Total steps", type = "count", breaks = 22)
 ```
 
+![](PA1_template_files/figure-html/histogram-1.png) 
+
 Calculate and report the mean and median total number of steps taken per day
 
-```{r mean_median, echo=TRUE, results="asis"}
+
+```r
 mSteps<-data.frame(mean = mean(stepsperDay), median = median(stepsperDay),
                         row.names = "values")
 mStepsTable <- xtable(mSteps)
 print(mStepsTable, type = "html")
 ```
 
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Sat Feb 14 19:18:29 2015 -->
+<table border=1>
+<tr> <th>  </th> <th> mean </th> <th> median </th>  </tr>
+  <tr> <td align="right"> values </td> <td align="right"> 9354.23 </td> <td align="right"> 10395 </td> </tr>
+   </table>
+
 ## What is the average daily activity pattern?
 
 Make a time series plot of the 5-minute interval (x-axis) and the average number
 of steps taken, averaged across all days (y-axis)
 
-```{r dailyseriesplot, echo=TRUE}
+
+```r
 SI<-tapply(activity$steps, activity$interval, FUN=mean, na.rm = T)
 SItable<-data.frame(interval = as.integer(names(SI)), averageSteps = SI)
 rownames(SItable) <- NULL
@@ -67,23 +88,41 @@ xyplot(averageSteps ~ interval, data = SItable, type = "l",
        xlab = "5-minute interval", ylab = "Average number of steps")
 ```
 
+![](PA1_template_files/figure-html/dailyseriesplot-1.png) 
+
 Identify the 5-minute interval that contains the maximum average number of steps.
-```{r maximuminterval, echo=TRUE, results="asis"}
+
+```r
 maxSI <- SItable[which(SItable$averageSteps == max(SItable$averageSteps)),]
 colnames(maxSI)[2] <- "maximum average steps"
 maxSItable <- xtable(maxSI)
 print(maxSItable, type = "html")
 ```
 
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Sat Feb 14 19:18:30 2015 -->
+<table border=1>
+<tr> <th>  </th> <th> interval </th> <th> maximum average steps </th>  </tr>
+  <tr> <td align="right"> 104 </td> <td align="right"> 835 </td> <td align="right"> 206.17 </td> </tr>
+   </table>
+
 ## Imputing missing values
 
 Calculate and report the total number of missing values in the dataset.
 
-```{r missingvalue, echo=TRUE, results="asis"}
+
+```r
 missingValues<-data.frame(NumberofMissingValues=sum(!complete.cases(activity)))
 MVtable <- xtable(missingValues)
 print(MVtable, type = "html")
 ```
+
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Sat Feb 14 19:18:30 2015 -->
+<table border=1>
+<tr> <th>  </th> <th> NumberofMissingValues </th>  </tr>
+  <tr> <td align="right"> 1 </td> <td align="right"> 2304 </td> </tr>
+   </table>
 
 Eliminate the NAs by filling the NAs with the mean number of steps of the 
 corresponding 5-minutes interval. Create a new dataset activity_ed with the 
@@ -91,7 +130,8 @@ missing data filled in. Then make a histogram of the total number of steps taken
 each day and Calculate and report the mean and median total number of steps 
 taken per day.
 
-```{r fillmissingdata, echo=TRUE, results="asis"}
+
+```r
 activity_ed<-activity
 index<-is.na(activity$steps)
 for (i in 1:nrow(activity_ed)){
@@ -103,23 +143,45 @@ for (i in 1:nrow(activity_ed)){
 stepsperDay_ed<-tapply(activity_ed$steps, activity_ed$date, FUN = sum)
 histogram(stepsperDay_ed, main = "Total number of steps taken per day", 
           xlab = "Total steps", type = "count", breaks = 22)
+```
+
+![](PA1_template_files/figure-html/fillmissingdata-1.png) 
+
+```r
 mSteps_ed<-data.frame(mean = mean(stepsperDay_ed), 
                       median = median(stepsperDay_ed), row.names = "values")
 mStepsTable_ed <- xtable(mSteps_ed)
 print(mStepsTable_ed, type = "html")
 ```
 
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Sat Feb 14 19:18:31 2015 -->
+<table border=1>
+<tr> <th>  </th> <th> mean </th> <th> median </th>  </tr>
+  <tr> <td align="right"> values </td> <td align="right"> 10766.19 </td> <td align="right"> 10766.19 </td> </tr>
+   </table>
+
 Calculate the impact of imputing missing data on the estimates of the total 
 daily number of steps by compare the means and medians of them of the original 
 data and the data with missing data filled in.
 
-```{r evaluateimpact, echo=TRUE, results="asis"}
+
+```r
 cmSteps <- rbind(mSteps, mSteps_ed, mSteps_ed - mSteps)
 rownames(cmSteps)<-c("Original estimates", "Modified estimates", 
                      "Increased estimates")
 cmStepstable <- xtable(cmSteps)
 print(cmStepstable, type = "html")
 ```
+
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Sat Feb 14 19:18:31 2015 -->
+<table border=1>
+<tr> <th>  </th> <th> mean </th> <th> median </th>  </tr>
+  <tr> <td align="right"> Original estimates </td> <td align="right"> 9354.23 </td> <td align="right"> 10395.00 </td> </tr>
+  <tr> <td align="right"> Modified estimates </td> <td align="right"> 10766.19 </td> <td align="right"> 10766.19 </td> </tr>
+  <tr> <td align="right"> Increased estimates </td> <td align="right"> 1411.96 </td> <td align="right"> 371.19 </td> </tr>
+   </table>
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -130,7 +192,8 @@ or weekend day. Make a panel plot containing a time series plot of the 5-minute
 interval (x-axis) and the average number of steps taken, averaged across all 
 weekday days or weekend days (y-axis).
 
-```{r weekdayplot, echo=TRUE, fig.height= 8}
+
+```r
 Weekday <- weekdays(activity_ed$date, abbreviate = T)
 for (i in 1:length(Weekday)){
         if (Weekday[i] %in% c("Mon","Tue","Wed","Thu","Fri")){
@@ -156,3 +219,5 @@ xyplot(averageSteps ~ interval|Weekday, data = SItable_ed, type = "l",
        layout = c(1,2), main = "Average number of steps by time intervals", 
        xlab = "5-minute interval", ylab = "Average number of steps")
 ```
+
+![](PA1_template_files/figure-html/weekdayplot-1.png) 
